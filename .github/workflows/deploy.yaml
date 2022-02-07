@@ -71,7 +71,7 @@ jobs:
           cat ${HOME}/.kube/config
       
       - name: Deploy
-        uses: kangj-pluto/github-action-helm3@v2
+        uses: kangj-pluto/github-action-helm3@master
         with:
           exec: helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml
           kubeconfig: '${{ steps.kube.outputs.config }}'
