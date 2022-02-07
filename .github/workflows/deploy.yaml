@@ -47,7 +47,7 @@ jobs:
 
       - name: test connectivity
         run: |
-          ping -c 10 e72b52efb5a2a7ca3fc69f58f807de3c.gr7.us-east-2.eks.amazonaws.com
+          telnet e72b52efb5a2a7ca3fc69f58f807de3c.gr7.us-east-2.eks.amazonaws.com 443
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
