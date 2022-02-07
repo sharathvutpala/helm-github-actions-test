@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-#     - name: 'Deploy'
+    - name: 'Deploy'
 #       uses: deliverybot/helm@master
 #       with:
 #         release: 'crypto-api'
