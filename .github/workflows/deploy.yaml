@@ -23,7 +23,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS__KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
-        cluster-name: crypt-api-eks
+        cluster-name: crypto-api-eks
+        chart-path: ./k8s-helm/crypto-api
         config-files: ./k8s-helm/crypto-api/value.yaml
         namespace: default
-        name: crypt-api-demo
+        name: crypto-api-demo
