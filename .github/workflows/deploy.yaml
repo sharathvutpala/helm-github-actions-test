@@ -7,6 +7,14 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: assume sts
+      uses: peymanmortazavi/eks-helm-deploy@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+        run: |
+          aws sts get-caller-identity
     - name: 'Deploy'
 #       uses: deliverybot/helm@master
 #       with:
@@ -24,7 +32,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
         cluster-name: crypto-api-eks
-#        cluster-role-arn: arn:aws:iam::959068696076:role/crypto-api-eks2022020709502244020000000c
+        cluster-role-arn: arn:aws:iam::959068696076:role/crypto-api-eks2022020709502244020000000c
         chart-path: ./k8s-helm/crypto-api
         config-files: ./k8s-helm/crypto-api/value.yaml
         namespace: default
