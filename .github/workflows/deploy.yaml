@@ -45,11 +45,29 @@ jobs:
       #     echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./.helm/app/Chart.yaml &&
       #     cat ./.helm/app/Chart.yaml
 
-      - name: test connectivity
+      - name: Configure AWS credentials for EKS deployment
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Setup kubeconfig
+        id: setup-kubeconfig
         run: |
-          telnet e72b52efb5a2a7ca3fc69f58f807de3c.gr7.us-east-2.eks.amazonaws.com 443
+          aws eks --region us-east-2 update-kubeconfig --name crypt-api-eks
+      
+      - name: Copy kubectl config to output for helm deploy
+        id: kube
+        run: |
+          CONFIG="$(cat ${HOME}/.kube/config)"
+          CONFIG="${CONFIG//'%'/'%25'}"
+          CONFIG="${CONFIG//$'\n'/'%0A'}"
+          CONFIG="${CONFIG//$'\r'/'%0D'}"
+          echo "::set-output name=config::$CONFIG"
+      
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
           exec: helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml
-          kubeconfig: '${{ secrets.KUBECONFIG }}'
+          kubeconfig: '${{ steps.kube.outputs.config }}'
