@@ -1,11 +1,11 @@
-# name: Deploy
-# on: push
+name: Deploy
+on: push
 
-# jobs:
-#   deployment:
-#     runs-on: 'ubuntu-latest'
-#     steps:
-#     - uses: actions/checkout@v1
+jobs:
+  deployment:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: actions/checkout@v1
 
 #     - name: 'Deploy'
 #       uses: deliverybot/helm@master
@@ -18,60 +18,60 @@
 #       env:
 #         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}' 
 
-#       # uses: peymanmortazavi/eks-helm-deploy@v2
-#       # with:
-#       #   aws-access-key-id: ${{ secrets.AWS_ACCESS__KEY_ID }}
-#       #   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#       #   aws-region: us-east-2
-#       #   cluster-name: crypto-api-eks
-#       #   cluster-role-arn: arn:aws:iam::959068696076:role/crypto-api-eks2022020709502244020000000c
-#       #   chart-path: ./k8s-helm/crypto-api
-#       #   config-files: ./k8s-helm/crypto-api/value.yaml
-#       #   namespace: default
-#       #   name: crypto-api-demo
+      uses: peymanmortazavi/eks-helm-deploy@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS__KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+        cluster-name: crypto-api-eks
+#        cluster-role-arn: arn:aws:iam::959068696076:role/crypto-api-eks2022020709502244020000000c
+        chart-path: ./k8s-helm/crypto-api
+        config-files: ./k8s-helm/crypto-api/value.yaml
+        namespace: default
+        name: crypto-api-demo
 
-name: Deploy
-on: push
+# name: Deploy
+# on: push
 
-jobs:
-  deployment:
-    runs-on: 'ubuntu-latest'
-    steps:
-      - uses: actions/checkout@v1
-      # - name: Prep helm chart
-      #   run: |
-      #     mv ./.helm/app/Chart.yaml ./.helm/app/Chart.old.yaml &&
-      #     cat ./.helm/app/Chart.old.yaml | grep -v appVersion > ./.helm/app/Chart.yaml &&
-      #     echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./.helm/app/Chart.yaml &&
-      #     cat ./.helm/app/Chart.yaml
+# jobs:
+#   deployment:
+#     runs-on: 'ubuntu-latest'
+#     steps:
+#       - uses: actions/checkout@v1
+#       # - name: Prep helm chart
+#       #   run: |
+#       #     mv ./.helm/app/Chart.yaml ./.helm/app/Chart.old.yaml &&
+#       #     cat ./.helm/app/Chart.old.yaml | grep -v appVersion > ./.helm/app/Chart.yaml &&
+#       #     echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./.helm/app/Chart.yaml &&
+#       #     cat ./.helm/app/Chart.yaml
 
-      - name: Configure AWS credentials for EKS deployment
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+#       - name: Configure AWS credentials for EKS deployment
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-2
 
-      - name: Setup kubeconfig
-        id: setup-kubeconfig
-        run: |
-          aws eks --region us-east-2 update-kubeconfig --name crypto-api-eks
+#       - name: Setup kubeconfig
+#         id: setup-kubeconfig
+#         run: |
+#           aws eks --region us-east-2 update-kubeconfig --name crypto-api-eks
       
-      - name: Copy kubectl config to output for helm deploy
-        id: kube
-        run: |
-          CONFIG="$(cat ${HOME}/.kube/config)"
-          CONFIG="${CONFIG//'%'/'%25'}"
-          CONFIG="${CONFIG//$'\n'/'%0A'}"
-          CONFIG="${CONFIG//$'\r'/'%0D'}"
-          echo "::set-output name=config::$CONFIG"
+#       - name: Copy kubectl config to output for helm deploy
+#         id: kube
+#         run: |
+#           CONFIG="$(cat ${HOME}/.kube/config)"
+#           CONFIG="${CONFIG//'%'/'%25'}"
+#           CONFIG="${CONFIG//$'\n'/'%0A'}"
+#           CONFIG="${CONFIG//$'\r'/'%0D'}"
+#           echo "::set-output name=config::$CONFIG"
       
-      - name: print output 
-        run: |
-          cat ${HOME}/.kube/config
+#       - name: print output 
+#         run: |
+#           cat ${HOME}/.kube/config
       
-      - name: Deploy
-        uses: kangj-pluto/github-action-helm3@master
-        with:
-          exec: helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml
-          kubeconfig: '${{ steps.kube.outputs.config }}'
+#       - name: Deploy
+#         uses: kangj-pluto/github-action-helm3@master
+#         with:
+#           exec: helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml
+#           kubeconfig: '${{ steps.kube.outputs.config }}'
