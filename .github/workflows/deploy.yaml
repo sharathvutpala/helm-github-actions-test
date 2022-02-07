@@ -44,6 +44,14 @@ jobs:
       #     cat ./.helm/app/Chart.old.yaml | grep -v appVersion > ./.helm/app/Chart.yaml &&
       #     echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./.helm/app/Chart.yaml &&
       #     cat ./.helm/app/Chart.yaml
+      - name: tests
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: kubectl get pods 
+          kubeconfig: '${{ secrets.KUBECONFIG }}'
+      - name: test connectivity
+        run: |
+          ping -c 10 e72b52efb5a2a7ca3fc69f58f807de3c.gr7.us-east-2.eks.amazonaws.com
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
