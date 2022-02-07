@@ -66,6 +66,9 @@ jobs:
           CONFIG="${CONFIG//$'\r'/'%0D'}"
           echo "::set-output name=config::$CONFIG"
       
+      - name: print output 
+        exec: cat ${HOME}/.kube/config
+      
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
