@@ -55,7 +55,7 @@ jobs:
       - name: Setup kubeconfig
         id: setup-kubeconfig
         run: |
-          aws eks --region us-east-2 update-kubeconfig --name crypt-api-eks
+          aws eks --region us-east-2 update-kubeconfig --name crypto-api-eks
       
       - name: Copy kubectl config to output for helm deploy
         id: kube
