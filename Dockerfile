@@ -1,28 +1,24 @@
-FROM alpine:3.10.2
+# pull official base image
+FROM python:3.9.10-alpine3.14
 
-ENV BASE_URL="https://get.helm.sh"
+# set work directory
+WORKDIR /code
 
-ENV HELM_2_FILE="helm-v2.17.0-linux-amd64.tar.gz"
-ENV HELM_3_FILE="helm-v3.4.2-linux-amd64.tar.gz"
+# install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-RUN apk add --no-cache ca-certificates \
-    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    jq curl bash nodejs aws-cli && \
-    # Install helm version 2:
-    curl -L ${BASE_URL}/${HELM_2_FILE} |tar xvz && \
-    mv linux-amd64/helm /usr/bin/helm && \
-    chmod +x /usr/bin/helm && \
-    rm -rf linux-amd64 && \
-    # Install helm version 3:
-    curl -L ${BASE_URL}/${HELM_3_FILE} |tar xvz && \
-    mv linux-amd64/helm /usr/bin/helm3 && \
-    chmod +x /usr/bin/helm3 && \
-    rm -rf linux-amd64 && \
-    # Init version 2 helm:
-    helm init --client-only
+# install dependencies
+RUN set -eux \
+    && apk add --no-cache --virtual .build-deps build-base \
+        libressl-dev libffi-dev gcc musl-dev python3-dev \
+    && pip install --upgrade pip setuptools wheel \
+    && pip install -r /code/requirements.txt
+# copy project
+COPY api/ /code/api
+COPY tests/ /code/tests
 
-ENV PYTHONPATH "/usr/lib/python3.8/site-packages/"
+EXPOSE 8000
 
-COPY . /usr/src/
-ENTRYPOINT ["node", "/usr/src/index.js"]
-
+#CMD ["sleep", "3600"]
+CMD  /usr/local/bin/uvicorn api.currency:app --reload --port 8000 --host 0.0.0.0 --log-level debug --workers 1
