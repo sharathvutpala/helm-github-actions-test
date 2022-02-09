@@ -28,6 +28,6 @@ dependencies:
   version: 4.0.16
   repository: https://kubernetes.github.io/ingress-nginx
 
-- name: cert-manager
-  version: 1.7.1
-  repository: https://charts.jetstack.io
+  #- name: cert-manager
+  #version: 1.7.1
+  #repository: https://charts.jetstack.io

@@ -74,5 +74,5 @@ jobs:
       - name: Deploy
         uses: sharathvutpala/github-action-helm3@master
         with:
-          exec: helm dependency build ./k8s-helm/crypto-api && helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml --values=./k8s-helm/crypto-api/cert_manager-values.yaml
+          exec: helm dependency build ./k8s-helm/crypto-api && kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.yaml && helm upgrade crypto-api ./k8s-helm/crypto-api/ --install --wait --atomic --namespace=default  --values=./k8s-helm/crypto-api/values.yaml 
           kubeconfig: '${{ steps.kube.outputs.config }}'

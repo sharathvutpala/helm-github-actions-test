@@ -4,6 +4,9 @@ metadata:
   annotations: 
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   name: crypto-api-ingress
+  labels:
+    {{- include "crypto-api.labels" . | nindent 4 }}
+
 spec:
   tls:
   - hosts:
