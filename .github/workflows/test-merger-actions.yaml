@@ -6,7 +6,7 @@ on:
 
 jobs:
   generate-documentation:
-    runs-on: ubuntu
+    runs-on: self-hosted-test-repo
     steps:
     - name: Checkout
       uses: actions/checkout@v3
